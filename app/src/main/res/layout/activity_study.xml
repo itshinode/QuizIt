@@ -8,13 +8,32 @@
 
     <TextView
         android:id="@+id/tvHeader"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:text="Study Mode"
         android:textColor="@color/primaryBlue"
         android:textSize="22sp"
         android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/studyProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvHeader"
+        android:layout_marginTop="10dp"
+        android:progressDrawable="@android:drawable/progress_horizontal"
+        android:progressTint="@color/primaryBlue" />
+
+    <TextView
+        android:id="@+id/tvProgressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/studyProgress"
+        android:layout_centerHorizontal="true"
+        android:text="Card 1 of 10"
+        android:textColor="@color/textSecondary" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/flashcardView"
@@ -30,9 +49,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="24dp"
-            android:text="Tap to Reveal Question"
+            android:text="Question"
             android:textColor="@color/textPrimary"
-            android:textSize="20sp" />
+            android:textSize="22sp" />
     </androidx.cardview.widget.CardView>
 
     <Button
@@ -49,8 +68,6 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvHeader"
         android:text="Back"
         android:textColor="@color/textSecondary" />
-
 </RelativeLayout>

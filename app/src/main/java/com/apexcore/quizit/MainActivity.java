@@ -1,9 +1,10 @@
 package com.apexcore.quizit;
 
 
+
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        DataManager.loadDecks(this);
+
         deckListView = findViewById(R.id.deckListView);
         btnCreateDeck = findViewById(R.id.btnCreateDeck);
 
@@ -41,17 +44,26 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Long Click to Delete
+        // Long Click for Options (Edit/Delete)
         deckListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            String[] options = {"Edit Deck", "Delete Deck"};
+
             new AlertDialog.Builder(this)
-                    .setTitle("Delete Deck")
-                    .setMessage("Are you sure you want to delete this deck?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        DataManager.allDecks.remove(position);
-                        updateList();
-                        Toast.makeText(this, "Deck Deleted", Toast.LENGTH_SHORT).show();
+                    .setTitle("Options")
+                    .setItems(options, (dialog, which) -> {
+                        if (which == 0) {
+                            // EDIT: Send index to CreateDeckActivity
+                            Intent intent = new Intent(this, CreateDeckActivity.class);
+                            intent.putExtra("edit_index", position);
+                            startActivity(intent);
+                        } else {
+                            // DELETE
+                            DataManager.allDecks.remove(position);
+                            DataManager.saveDecks(this);
+                            updateList();
+                            Toast.makeText(this, "Deck Deleted", Toast.LENGTH_SHORT).show();
+                        }
                     })
-                    .setNegativeButton("Cancel", null)
                     .show();
             return true;
         });

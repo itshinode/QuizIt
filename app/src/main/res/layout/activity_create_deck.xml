@@ -1,54 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundGray"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
     <Button
         android:id="@+id/btnBack"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back" />
-
-    <EditText
-        android:id="@+id/etDeckName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Deck Name (e.g. Geography)" />
+        android:text="← Cancel" />
 
     <TextView
-        android:id="@+id/tvCardCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cards: 0/10"
-        android:layout_marginTop="10dp"/>
+        android:text="Create New Deck"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"/>
 
-    <EditText
-        android:id="@+id/etQuestion"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Question"
-        android:layout_marginTop="10dp"/>
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
 
-    <EditText
-        android:id="@+id/etAnswer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Answer" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnAddCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Card to Deck"
-        android:layout_marginTop="10dp"/>
+            <EditText
+                android:id="@+id/etDeckName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Deck Subject Name"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DDDDDD"
+                android:layout_marginVertical="8dp"/>
+
+            <TextView
+                android:id="@+id/tvCardCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cards Added: 0 / 10"
+                android:textColor="@color/textSecondary" />
+
+            <EditText
+                android:id="@+id/etQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Question"
+                android:layout_marginTop="10dp"/>
+
+            <EditText
+                android:id="@+id/etAnswer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Answer" />
+
+            <Button
+                android:id="@+id/btnAddCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/lightBlue"
+                android:text="+ Add Card"
+                android:textColor="@color/primaryBlue" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/btnSaveDeck"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#4CAF50"
-        android:text="Finish and Save Deck"
-        android:layout_marginTop="20dp"/>
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/primaryBlue"
+        android:text="SAVE DECK"
+        android:textColor="#FFFFFF" />
+
 </LinearLayout>
