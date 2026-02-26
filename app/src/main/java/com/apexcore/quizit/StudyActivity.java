@@ -1,9 +1,7 @@
 package com.apexcore.quizit;
 
-
-
-
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,10 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 public class StudyActivity extends AppCompatActivity {
+    // 1. Declare variables as MEMBER variables so the whole class sees them
     private Deck currentDeck;
     private int currentIndex = 0;
     private int correctCount = 0;
     private boolean isAnswerVisible = false;
+
+    private TextView tvDisplay;
+    private ProgressBar studyProgress;
+    private CardView flashcardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,35 +28,32 @@ public class StudyActivity extends AppCompatActivity {
         int deckIndex = getIntent().getIntExtra("deck_index", 0);
         currentDeck = DataManager.allDecks.get(deckIndex);
 
-        CardView flashcardView = findViewById(R.id.flashcardView);
-        TextView tvDisplay = findViewById(R.id.tvDisplay);
-        ProgressBar studyProgress = findViewById(R.id.studyProgress);
+        // 2. Initialize the member variables
+        flashcardView = findViewById(R.id.flashcardView);
+        tvDisplay = findViewById(R.id.tvDisplay);
+        studyProgress = findViewById(R.id.studyProgress);
         Button btnCorrect = findViewById(R.id.btnCorrect);
         Button btnWrong = findViewById(R.id.btnWrong);
         Button btnExit = findViewById(R.id.btnExit);
 
         studyProgress.setMax(currentDeck.getCards().size());
-        updateUI(tvDisplay, studyProgress);
+        updateUI(); // No need to pass variables anymore
 
-        // Flip logic
         flashcardView.setOnClickListener(v -> {
             flashcardView.animate().rotationY(90).setDuration(150).withEndAction(() -> {
                 isAnswerVisible = !isAnswerVisible;
-                updateUI(tvDisplay, studyProgress);
+                updateUI();
                 flashcardView.setRotationY(-90);
                 flashcardView.animate().rotationY(0).setDuration(150).start();
             }).start();
         });
 
-        // "Got it!" logic
         btnCorrect.setOnClickListener(v -> {
             correctCount++;
             moveToNextCard();
         });
 
-        // "Missed" logic
         btnWrong.setOnClickListener(v -> moveToNextCard());
-
         btnExit.setOnClickListener(v -> showExitConfirmation());
     }
 
@@ -61,21 +61,22 @@ public class StudyActivity extends AppCompatActivity {
         if (currentIndex < currentDeck.getCards().size() - 1) {
             currentIndex++;
             isAnswerVisible = false;
-            updateUI(findViewById(R.id.tvDisplay), findViewById(R.id.studyProgress));
+            updateUI();
         } else {
             showFinalScore();
         }
     }
 
-    private void updateUI(TextView tv, ProgressBar pb) {
+    private void updateUI() {
         Flashcard card = currentDeck.getCards().get(currentIndex);
-        pb.setProgress(currentIndex + 1);
+        studyProgress.setProgress(currentIndex + 1);
+
         if (isAnswerVisible) {
-            tv.setText(card.getAnswer());
-            tv.setTextColor(getResources().getColor(R.color.primaryBlue));
+            tvDisplay.setText(card.getAnswer());
+            tvDisplay.setTextColor(getResources().getColor(R.color.primaryBlue));
         } else {
-            tv.setText(card.getQuestion());
-            tv.setTextColor(getResources().getColor(R.color.textPrimary));
+            tvDisplay.setText(card.getQuestion());
+            tvDisplay.setTextColor(getResources().getColor(R.color.textPrimary));
         }
     }
 
@@ -85,7 +86,7 @@ public class StudyActivity extends AppCompatActivity {
 
         new AlertDialog.Builder(this)
                 .setTitle("Study Session Complete!")
-                .setMessage("Score: " + correctCount + "/" + total + " (" + percent + "%)\nGreat job!")
+                .setMessage("Score: " + correctCount + "/" + total + " (" + percent + "%)")
                 .setCancelable(false)
                 .setPositiveButton("Back to Home", (dialog, which) -> finish())
                 .show();
@@ -94,7 +95,7 @@ public class StudyActivity extends AppCompatActivity {
     private void showExitConfirmation() {
         new AlertDialog.Builder(this)
                 .setTitle("Exit Study?")
-                .setMessage("Your progress in this session will not be saved.")
+                .setMessage("Your progress will be lost.")
                 .setPositiveButton("Exit", (dialog, which) -> finish())
                 .setNegativeButton("Stay", null)
                 .show();
