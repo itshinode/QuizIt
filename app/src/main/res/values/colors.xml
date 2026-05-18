@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryBlue">#1976D2</color>
-    <color name="lightBlue">#BBDEFB</color>
-    <color name="cardBackground">#FFFFFF</color>
-    <color name="backgroundGray">#F5F5F5</color>
-    <color name="textPrimary">#212121</color>
-    <color name="textSecondary">#757575</color>
-    <color name="deleteRed">#E53935</color>
+    <!-- Brand & Primary Colors -->
+    <color name="primaryBlue">#4F46E5</color>
+    <color name="primaryDark">#312E81</color>
+    <color name="primaryLight">#EEF2FF</color>
+    <color name="accentIndigo">#6366F1</color>
 
+    <!-- Surfaces & Backgrounds -->
+    <color name="backgroundWhite">#FFFFFF</color>
+    <color name="surfaceLight">#F8FAFC</color>
+    <color name="divider">#E2E8F0</color>
+    <color name="cardShadow">#1A000000</color>
+
+    <!-- Typography -->
+    <color name="textPrimary">#0F172A</color>
+    <color name="textSecondary">#475569</color>
+    <color name="textMuted">#94A3B8</color>
+    <color name="textOnPrimary">#FFFFFF</color>
+
+    <!-- Semantic Status Colors -->
+    <color name="successGreen">#10B981</color>
+    <color name="successLight">#ECFDF5</color>
+    <color name="errorRed">#EF4444</color>
+    <color name="errorLight">#FEF2F2</color>
+
+    <!-- Premium Gradients -->
+    <color name="gradStart">#4F46E5</color>
+    <color name="gradMid">#7C3AED</color>
+    <color name="gradEnd">#C026D3</color>
+    
+    <!-- Component Specifics -->
+    <color name="cardGradStart">#FFFFFF</color>
+    <color name="cardGradEnd">#F1F5F9</color>
+    <color name="subjectIconBg">#F1F5F9</color>
+    <color name="buttonDefaultColor">#E5E7EB</color>
+    <color name="option_unselected_bg">#FFFFFF</color>
+    <color name="option_unselected_stroke">#E2E8F0</color>
+    
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
 </resources>
