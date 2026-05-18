@@ -1,73 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/study_background">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg_study"
-        android:scaleType="centerCrop" />
-
-    <Button
-        android:id="@+id/btnExit"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="← Exit"
-        android:textColor="@color/white" />
-
-    <ProgressBar
-        android:id="@+id/studyProgress"
-        style="?android:attr/progressBarStyleHorizontal"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnExit"
-        android:layout_marginHorizontal="20dp" />
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/flashcardView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp">
-
-        <TextView
-            android:id="@+id/tvDisplay"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:padding="20dp"
-            android:text="Question"
-            android:textSize="24sp" />
-    </androidx.cardview.widget.CardView>
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+            app:titleTextColor="@color/textPrimary"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
+        android:id="@+id/layoutStudyContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="10dp"
-        android:weightSum="2">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="24dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <Button
-            android:id="@+id/btnWrong"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/deleteRed"
-            android:text="❌ Missed" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp">
+            
+            <TextView
+                android:id="@+id/tvProgressLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Session Progress"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/textSecondary"
+                android:letterSpacing="0.1" />
 
-        <Button
-            android:id="@+id/btnCorrect"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_margin="5dp"
+            <TextView
+                android:id="@+id/tvProgressCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1/10"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/primaryBlue" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/studyProgress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginBottom="32dp"
+            android:progressTint="@color/primaryBlue"
+            android:progressBackgroundTint="@color/divider" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#4CAF50"
-            android:text="✅ Got It!" />
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="12dp"
+            app:strokeWidth="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:rippleColor="@color/primaryLight">
+
+            <TextView
+                android:id="@+id/tvDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:padding="32dp"
+                android:textColor="@color/textPrimary"
+                android:textSize="24sp"
+                android:lineSpacingExtra="6dp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Modern MCQ Options -->
+        <LinearLayout
+            android:id="@+id/layoutMCQ"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionA"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="12dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/option_unselected_stroke"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/primaryLight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionB"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="12dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/option_unselected_stroke"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/primaryLight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionC"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="12dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/option_unselected_stroke"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/primaryLight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOptionD"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_marginBottom="24dp"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/option_unselected_stroke"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/primaryLight" />
+        </LinearLayout>
+
+        <!-- Redesigned Action Footer -->
+        <LinearLayout
+            android:id="@+id/layoutManualReveal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWrong"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/missed"
+                android:textColor="@color/errorRed"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                app:strokeColor="@color/errorRed"
+                app:strokeWidth="1.5dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCorrect"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/got_it"
+                android:textStyle="bold"
+                app:backgroundTint="@color/successGreen"
+                app:cornerRadius="20dp"
+                app:elevation="4dp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNextCard"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="@string/next"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/primaryBlue"
+            app:cornerRadius="20dp"
+            app:elevation="6dp" />
+
     </LinearLayout>
-</RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutSummary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✨"
+            android:textSize="80sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="@string/session_complete"
+            android:textColor="@color/textPrimary"
+            android:textSize="32sp" />
+
+        <TextView
+            android:id="@+id/tvFinalScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/primaryBlue"
+            android:textSize="22sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFinishStudy"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_marginTop="64dp"
+            android:text="@string/back_to_home"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/gradStart"
+            app:cornerRadius="24dp"
+            app:elevation="8dp" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

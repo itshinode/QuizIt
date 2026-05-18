@@ -1,85 +1,203 @@
 package com.apexcore.quizit;
 
-
-
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * CreateDeckActivity handles the creation and editing of study subjects.
+ */
 public class CreateDeckActivity extends AppCompatActivity {
-    Deck temporaryDeck;
-    int cardCount = 0;
-    int editIndex = -1; // -1 means we are creating a NEW deck
+    private static final String KEY_WORKING_DECK = "working_deck";
+    private static final String KEY_IS_MCQ = "is_mcq_mode";
+
+    private Deck workingDeck;
+    private int editIndex = -1;
+
+    private TextInputEditText etDeckName, etQuestion, etAnswer;
+    private TextInputEditText etOptA, etOptB, etOptC, etOptD;
+    private TextView tvCardCount;
+    private Spinner spinnerCorrectAnswer;
+    private LinearLayout layoutManual, layoutMCQ;
+    private MaterialButton btnToggleMCQ;
+    private boolean isMCQMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_deck);
 
-        EditText etDeckName = findViewById(R.id.etDeckName);
-        EditText etQuestion = findViewById(R.id.etQuestion);
-        EditText etAnswer = findViewById(R.id.etAnswer);
-        TextView tvCardCount = findViewById(R.id.tvCardCount);
-        Button btnAddCard = findViewById(R.id.btnAddCard);
-        Button btnSaveDeck = findViewById(R.id.btnSaveDeck);
-        Button btnBack = findViewById(R.id.btnBack);
+        // Crucial: Load existing data into memory immediately to prevent accidental overwrites
+        DataManager.ensureDecksLoaded(this);
 
-        // CHECK IF EDITING
-        editIndex = getIntent().getIntExtra("edit_index", -1);
-        if (editIndex != -1) {
-            // Load existing deck
-            temporaryDeck = DataManager.allDecks.get(editIndex);
-            etDeckName.setText(temporaryDeck.getDeckName());
-            cardCount = temporaryDeck.getCards().size();
-            tvCardCount.setText("Cards Added: " + cardCount + " / 10");
-            btnSaveDeck.setText("UPDATE DECK");
+        initializeViews();
+        setupSpinner();
+
+        if (savedInstanceState != null) {
+            workingDeck = (Deck) savedInstanceState.getSerializable(KEY_WORKING_DECK);
+            isMCQMode = savedInstanceState.getBoolean(KEY_IS_MCQ);
+            editIndex = getIntent().getIntExtra("edit_index", -1);
+        } else {
+            loadInitialData();
         }
 
-        btnAddCard.setOnClickListener(v -> {
-            String name = etDeckName.getText().toString().trim();
-            String q = etQuestion.getText().toString().trim();
-            String a = etAnswer.getText().toString().trim();
+        setupListeners();
+        applyModeUI();
+        updateCardCountDisplay();
+    }
 
-            if (name.isEmpty() || q.isEmpty() || a.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_WORKING_DECK, workingDeck);
+        outState.putBoolean(KEY_IS_MCQ, isMCQMode);
+    }
 
-            if (temporaryDeck == null) temporaryDeck = new Deck(name);
+    private void initializeViews() {
+        etDeckName = findViewById(R.id.etDeckName);
+        etQuestion = findViewById(R.id.etQuestion);
+        etAnswer = findViewById(R.id.etAnswer);
+        tvCardCount = findViewById(R.id.tvCardCount);
+        layoutManual = findViewById(R.id.layoutManualInput);
+        layoutMCQ = findViewById(R.id.layoutMCQInput);
+        etOptA = findViewById(R.id.etOptA);
+        etOptB = findViewById(R.id.etOptB);
+        etOptC = findViewById(R.id.etOptC);
+        etOptD = findViewById(R.id.etOptD);
+        spinnerCorrectAnswer = findViewById(R.id.spinnerCorrectAnswer);
+        btnToggleMCQ = findViewById(R.id.btnToggleMCQ);
+    }
 
-            if (cardCount < 10) {
-                temporaryDeck.addCard(new Flashcard(q, a));
-                cardCount++;
-                tvCardCount.setText("Cards Added: " + cardCount + " / 10");
-                etQuestion.setText("");
-                etAnswer.setText("");
-                Toast.makeText(this, "Card " + cardCount + " Added!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Maximum 10 cards reached.", Toast.LENGTH_SHORT).show();
-            }
+    private void setupSpinner() {
+        String[] keys = {"A", "B", "C", "D"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, keys);
+        spinnerCorrectAnswer.setAdapter(adapter);
+    }
+
+    private void loadInitialData() {
+        editIndex = getIntent().getIntExtra("edit_index", -1);
+        if (editIndex != -1 && editIndex < DataManager.allDecks.size()) {
+            // Work on a copy to allow discarding changes if the user cancels
+            workingDeck = new Deck(DataManager.allDecks.get(editIndex));
+            etDeckName.setText(workingDeck.getDeckName());
+        } else {
+            workingDeck = new Deck("");
+        }
+    }
+
+    private void setupListeners() {
+        btnToggleMCQ.setOnClickListener(v -> {
+            isMCQMode = !isMCQMode;
+            applyModeUI();
         });
 
-        btnSaveDeck.setOnClickListener(v -> {
-            if (temporaryDeck != null && !temporaryDeck.getCards().isEmpty()) {
+        findViewById(R.id.btnAddCard).setOnClickListener(v -> attemptAddCard());
+        findViewById(R.id.btnSaveDeck).setOnClickListener(v -> saveAndExit());
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+    }
 
-                if (editIndex == -1) {
-                    // It's a brand new deck, add it to the list
-                    DataManager.allDecks.add(temporaryDeck);
-                } else {
-                    // It's an edit, update the name and replace the old version
-                    DataManager.allDecks.set(editIndex, temporaryDeck);
-                }
+    private void applyModeUI() {
+        layoutMCQ.setVisibility(isMCQMode ? View.VISIBLE : View.GONE);
+        layoutManual.setVisibility(isMCQMode ? View.GONE : View.VISIBLE);
+        btnToggleMCQ.setText(isMCQMode ? R.string.switch_to_manual : R.string.switch_to_mcq);
+    }
 
-                DataManager.saveDecks(this);
-                finish();
-            } else {
-                Toast.makeText(this, "Add at least one card before saving!", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void attemptAddCard() {
+        String name = etDeckName.getText().toString().trim();
+        String q = etQuestion.getText().toString().trim();
 
-        btnBack.setOnClickListener(v -> finish());
+        if (name.isEmpty() || q.isEmpty()) {
+            Toast.makeText(this, R.string.error_required_fields, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        workingDeck.setDeckName(name);
+
+        if (isMCQMode) {
+            addMCQCard(q);
+        } else {
+            addManualCard(q);
+        }
+    }
+
+    private void addMCQCard(String question) {
+        String a = etOptA.getText().toString().trim();
+        String b = etOptB.getText().toString().trim();
+        String c = etOptC.getText().toString().trim();
+        String d = etOptD.getText().toString().trim();
+        String correct = spinnerCorrectAnswer.getSelectedItem().toString();
+
+        if (a.isEmpty() || b.isEmpty() || c.isEmpty() || d.isEmpty()) {
+            Toast.makeText(this, R.string.error_mcq_options, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> options = new ArrayList<>();
+        options.add(a); options.add(b); options.add(c); options.add(d);
+        workingDeck.addCard(new Flashcard(question, correct, options));
+        onCardAdded();
+    }
+
+    private void addManualCard(String question) {
+        String ans = etAnswer.getText().toString().trim();
+        if (ans.isEmpty()) {
+            Toast.makeText(this, R.string.error_answer_required, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        workingDeck.addCard(new Flashcard(question, ans, Flashcard.TYPE_MANUAL));
+        onCardAdded();
+    }
+
+    private void onCardAdded() {
+        updateCardCountDisplay();
+        clearInputs();
+        Toast.makeText(this, "Card added!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateCardCountDisplay() {
+        tvCardCount.setText(getString(R.string.cards_added_format, workingDeck.getCards().size()));
+    }
+
+    private void clearInputs() {
+        etQuestion.setText("");
+        etAnswer.setText("");
+        etOptA.setText("");
+        etOptB.setText("");
+        etOptC.setText("");
+        etOptD.setText("");
+    }
+
+    private void saveAndExit() {
+        String name = etDeckName.getText().toString().trim();
+        if (name.isEmpty()) {
+            Toast.makeText(this, R.string.error_required_fields, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (workingDeck.getCards().isEmpty()) {
+            Toast.makeText(this, R.string.error_add_cards_first, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        workingDeck.setDeckName(name);
+        if (editIndex == -1) {
+            DataManager.allDecks.add(workingDeck);
+        } else {
+            DataManager.allDecks.set(editIndex, workingDeck);
+        }
+
+        // Save immediately to disk
+        DataManager.saveDecks(this);
+        finish();
     }
 }

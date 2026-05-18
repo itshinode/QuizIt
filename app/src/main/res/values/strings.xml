@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">QuizIt</string>
+    <string name="card_count_format">%1$d Cards</string>
+    <string name="cards_added_format">Cards Added: %1$d</string>
+    <string name="deck_name_hint">Deck Name (e.g., Biology 101)</string>
+    <string name="question_hint">Question</string>
+    <string name="answer_hint">Answer</string>
+    <string name="add_card">Add Card to Deck</string>
+    <string name="save_deck">Finish and Save Deck</string>
+    <string name="cancel">Cancel</string>
+    <string name="switch_to_mcq">Switch to MCQ Mode</string>
+    <string name="switch_to_manual">Switch to Manual Mode</string>
+    <string name="session_complete">Session Complete!</string>
+    <string name="final_score_format">Score: %1$d/%2$d (%3$d%%)</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="delete_deck_title">Delete Deck</string>
+    <string name="delete_deck_message">Are you sure? This cannot be undone.</string>
+    <string name="delete_action">Delete</string>
+    <string name="error_required_fields">Deck name and question are required</string>
+    <string name="error_mcq_options">Fill all 4 options</string>
+    <string name="error_answer_required">Provide an answer</string>
+    <string name="error_add_cards_first">Add cards first!</string>
+    <string name="toast_deck_removed">Deck removed</string>
+    <string name="got_it">Got It</string>
+    <string name="missed">Missed</string>
+    <string name="next">Next</string>
+    <string name="edit_deck">Edit Deck</string>
+    <string name="delete_deck">Delete Deck</string>
+    <string name="deck_options">Deck Options</string>
 </resources>
